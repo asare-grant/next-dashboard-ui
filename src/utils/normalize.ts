@@ -1,15 +1,24 @@
-import { Dimensions, PixelRatio } from 'react-native';
-
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-
-const [shortDimension, longDimension] =
-  SCREEN_WIDTH < SCREEN_HEIGHT ? [SCREEN_WIDTH, SCREEN_HEIGHT] : [SCREEN_HEIGHT, SCREEN_WIDTH];
-
 const guidelineBaseWidth = 375;
 const guidelineBaseHeight = 812;
 
-export const normalizeX = (size: number) =>
-  Math.round(PixelRatio.roundToNearestPixel((shortDimension / guidelineBaseWidth) * size));
+const getWindowSize = () => {
+  if (typeof window === "undefined") {
+    // SSR fallback
+    return { width: 1440, height: 900 };
+  }
 
-export const normalizeY = (size: number) =>
-  Math.round(PixelRatio.roundToNearestPixel((longDimension / guidelineBaseHeight) * size));
+  return {
+    width: window.innerWidth,
+    height: window.innerHeight,
+  };
+};
+
+export const normalizeX = (size: number) => {
+  const { width } = getWindowSize();
+  return Math.round((width / guidelineBaseWidth) * size);
+};
+
+export const normalizeY = (size: number) => {
+  const { height } = getWindowSize();
+  return Math.round((height / guidelineBaseHeight) * size);
+};
