@@ -135,7 +135,7 @@ export default function AdminLoginPage() {
       <div className="w-[380px] rounded-2xl bg-white shadow-lg p-6">
         <h1 className="text-xl text-gray-700 font-semibold mb-1">Admin Dashboard</h1>
         <p className="text-sm text-gray-500 mb-6">
-          Sign in to manage your platform
+          Sign in to manage your account
         </p>
 
         <input
