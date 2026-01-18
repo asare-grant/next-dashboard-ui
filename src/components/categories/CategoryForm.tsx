@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,9 +36,18 @@ export default function CategoryForm({
   const [loading, setLoading] = useState(false);
 
   const handleImageUpload = (file: File) => {
+    const preview = URL.createObjectURL(file);
     setImageFile(file);
-    setImage(URL.createObjectURL(file));
+    setImage(preview);
   };
+
+  useEffect(() => {
+    return () => {
+      if (image?.startsWith("blob:")) {
+        URL.revokeObjectURL(image);
+      }
+    };
+  }, [image]);
 
   const handleSubmit = () => {
     if (loading) return; // ⛔ Prevent double clicks
@@ -50,13 +59,15 @@ export default function CategoryForm({
         setLoading(false);
         return;
       }
-
+      
       onSubmit({
         name,
         description,
         image,
         imageFile,
       });
+      setLoading(false);
+      
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -125,11 +136,12 @@ export default function CategoryForm({
         >
           Cancel
         </Button>
-        <Button 
+        <Button
           disabled={loading}
-          onClick={handleSubmit} 
-          className="w-[150] rounded-lg py-2 flex items-center justify-center gap-2 bg-blue-300 disabled:opacity-70 disabled:cursor-not-allowed">
-            {loading ? (
+          onClick={handleSubmit}
+          className="w-[150] rounded-lg py-2 flex items-center justify-center gap-2 bg-blue-300 disabled:opacity-70 disabled:cursor-not-allowed"
+        >
+          {loading ? (
             <>
               {/* Spinner */}
               <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
