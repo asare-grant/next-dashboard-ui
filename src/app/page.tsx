@@ -5,7 +5,7 @@ const Homepage = () => {
   return (
     <div className='flex items-center justify-center gap-5'>
       <AdminLoginPage />
-      <AdminSignupPage />
+      {/* <AdminSignupPage /> */}
     </div>
   )
 }

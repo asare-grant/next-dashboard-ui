@@ -130,7 +130,8 @@ export default function AdminLoginPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center">
+    {/* <div className="min-h-screen bg-slate-50 flex items-center justify-center"> */}
       <div className="w-[380px] rounded-2xl bg-white shadow-lg p-6">
         <h1 className="text-xl font-semibold mb-1">Admin Dashboard</h1>
         <p className="text-sm text-gray-500 mb-6">
