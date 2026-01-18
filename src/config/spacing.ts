@@ -1,7 +1,9 @@
-import { Platform, Dimensions } from "react-native";
 import { normalizeX, normalizeY } from "../utils/normalize";
 
-export const { height, width } = Dimensions.get("screen");
+const width =
+  typeof window !== "undefined" ? window.innerWidth : 1440;
+const height =
+  typeof window !== "undefined" ? window.innerHeight : 900;
 
 const spacingX = {
   _3: normalizeX(3),
@@ -39,7 +41,7 @@ const spacingH = {
   notiCard: normalizeY(55),
   icon: normalizeY(40),
   input: normalizeY(45),
-  topImg: Platform.OS == "ios" ? height * 0.28 : height * 0.21,
+  topImg: height * 0.25,
   registerTop: height * 0.3,
   _10: normalizeY(10),
   _12: normalizeY(12),
@@ -81,4 +83,4 @@ const fontS = {
   _40: normalizeY(40),
 };
 
-export { spacingX, spacingY, radius, spacingH, fontS };
+export { width, height, spacingX, spacingY, spacingH, radius, fontS };
