@@ -6,15 +6,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import MenuForm, { MenuFormValues } from "./MenuForm";
+import MenuForm, { MenuFormData } from "./MenuForm";
 
 interface Props {
   open: boolean;
   title: string;
   categories: string[]; // ✅ ADD THIS
-  initialData?: MenuFormValues;
+  initialData?: MenuFormData;
   onClose: () => void;
-  onSubmit: (data: MenuFormValues) => void;
+  onSubmit: (data: MenuFormData) => void;
 }
 
 export default function MenuFormModal({
