@@ -72,7 +72,7 @@ const Navbar = () => {
               <AvatarFallback>UI</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
-          <DropdownMenuContent sideOffset={12} className="mr-4 bg-white">
+          <DropdownMenuContent sideOffset={12} className="mr-4 bg-[#babdcc]">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
