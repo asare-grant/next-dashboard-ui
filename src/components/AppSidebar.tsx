@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
   Sidebar,
   SidebarContent,
@@ -88,6 +88,7 @@ const MENU_ITEMS = [
 
 const AppSidebar = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const [user, setUser] = useState<AdminUser | null>(null);
 
   /* =========================
@@ -149,8 +150,11 @@ const AppSidebar = () => {
                       <SidebarMenuButton asChild>
                         <Link
                           href={item.href}
-                          className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors
-                                   hover:bg-indigo-100 hover:text-[#08581480]"
+                          className={`flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-indigo-100 hover:text-[#08581480] ${
+                            pathname === item.href
+                              ? "bg-[#ffffff35] text-[#08581480]"
+                              : ""
+                          }`}
                         >
                           <Icon
                             size={18}
