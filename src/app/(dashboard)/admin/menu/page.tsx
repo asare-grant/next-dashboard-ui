@@ -50,7 +50,7 @@ export default function MenuPage() {
 
   /* ---------------- FETCH ---------------- */
 
- /* ---------------- FETCH ---------------- */
+  /* ---------------- FETCH ---------------- */
   const fetchMenus = async () => {
     try {
       setLoading(true);
@@ -110,7 +110,7 @@ export default function MenuPage() {
       if (editingMenu) {
         const res = await updateMenu(editingMenu.$id, payload);
         setMenus((prev) =>
-          prev.map((m) => (m.$id === editingMenu.$id ? res.menuItem : m))
+          prev.map((m) => (m.$id === editingMenu.$id ? res.menuItem : m)),
         );
         toast.success("Menu updated");
       } else {
@@ -129,7 +129,7 @@ export default function MenuPage() {
 
   /* ---------------- DELETE ---------------- */
 
-   const confirmDelete = async () => {
+  const confirmDelete = async () => {
     if (!menuToDelete) return;
     try {
       await deleteMenu(menuToDelete.$id);
@@ -156,12 +156,18 @@ export default function MenuPage() {
         return (
           <div className="flex items-center justify-center h-full">
             {src ? (
-              <Image
+              <img
                 src={src}
                 alt={params.data?.name ?? "menu"}
                 width={44}
                 height={44}
-                className="rounded-md object-cover border"
+                style={{
+                  width: 44,
+                  height: 44,
+                  objectFit: "cover",
+                  borderRadius: 6,
+                  border: "1px solid #e5e7eb",
+                }}
               />
             ) : (
               <span className="text-xs text-muted-foreground">—</span>
@@ -211,7 +217,7 @@ export default function MenuPage() {
         params: ICellRendererParams<
           MenuItem,
           { type: string; price: number }[] | undefined
-        >
+        >,
       ) => {
         const packs = params.value ?? [];
         if (!packs.length)
@@ -235,7 +241,7 @@ export default function MenuPage() {
       field: "allowedCustomizations",
       minWidth: 170,
       cellRenderer: (
-        params: ICellRendererParams<MenuItem, string[] | undefined>
+        params: ICellRendererParams<MenuItem, string[] | undefined>,
       ) => {
         const count = params.value?.length ?? 0;
         return (
@@ -257,7 +263,7 @@ export default function MenuPage() {
         params: ICellRendererParams<
           MenuItem,
           { name: string; price: number }[] | undefined
-        >
+        >,
       ) => {
         const count = params.value?.length ?? 0;
         return (

@@ -103,14 +103,14 @@ export default function MenuForm({
   const removePack = (index: number) => {
     update(
       "packs",
-      form.packs.filter((_, i) => i !== index)
+      form.packs.filter((_, i) => i !== index),
     );
   };
 
   const removeDrink = (index: number) => {
     update(
       "drinks",
-      form.drinks.filter((_, i) => i !== index)
+      form.drinks.filter((_, i) => i !== index),
     );
   };
 
@@ -122,7 +122,13 @@ export default function MenuForm({
         <div className="flex gap-4 mt-2 items-center">
           <div className="w-20 h-20 border rounded-lg overflow-hidden bg-gray-50">
             {preview ? (
-              <Image src={preview} alt="Preview" width={80} height={80} />
+              <img
+                src={preview}
+                alt="Preview"
+                width={80}
+                height={80}
+                style={{ width: 80, height: 80, objectFit: "cover" }}
+              />
             ) : (
               <span className="text-xs text-muted-foreground flex items-center justify-center h-full">
                 No Image
@@ -267,7 +273,7 @@ export default function MenuForm({
           onChange={(e) =>
             update(
               "allowedCustomizations",
-              e.target.value.split(",").map((v) => v.trim())
+              e.target.value.split(",").map((v) => v.trim()),
             )
           }
         />
