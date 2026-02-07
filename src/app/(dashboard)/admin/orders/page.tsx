@@ -118,7 +118,6 @@ export default function OrdersPage() {
   /* ================= SAVE ================= */
   const handleSaveOrder = async (data: {
     orderStatus: string;
-    paymentStatus: string;
   }) => {
     if (!editingOrder) return;
 
@@ -376,38 +375,6 @@ export default function OrdersPage() {
     [canEdit, canDelete],
   );
 
-  // useEffect(() => {
-  //   let unsubscribe: (() => void) | null = null;
-
-  //   try {
-  //     unsubscribe = client.subscribe(
-  //       `databases.${process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID}.collections.${process.env.NEXT_PUBLIC_APPWRITE_ORDERS_COLLECTION_ID}.documents`,
-  //       (event) => {
-  //         if (!event.payload) return;
-
-  //         const updatedOrder = mapOrderFromBackend(event.payload);
-
-  //         setOrders((prev) => {
-  //           const filtered = prev.filter((o) => o.id !== updatedOrder.id);
-
-  //           const next = [updatedOrder, ...filtered];
-
-  //           return next.sort(
-  //             (a, b) =>
-  //               new Date(b.createdAt).getTime() -
-  //               new Date(a.createdAt).getTime()
-  //           );
-  //         });
-  //       }
-  //     );
-  //   } catch (err) {
-  //     console.warn("Realtime subscription failed", err);
-  //   }
-
-  //   return () => {
-  //     if (unsubscribe) unsubscribe();
-  //   };
-  // }, []);
 
   useEffect(() => {
     let unsubscribe: (() => void) | null = null;
@@ -555,23 +522,3 @@ export default function OrdersPage() {
   );
 }
 
-//       {
-//   headerName: "Packaging",
-//   field: "items",
-//   minWidth: 200,
-//   cellRenderer: (params) => {
-//     if (!Array.isArray(params.value)) return "-";
-
-//     return params.value
-//       .map(
-//         (item) =>
-//           `${item.name}: ${
-//             item.packaging === "pack_and_leaf"
-//               ? "Pack & Leaf"
-//               : item.packaging.charAt(0).toUpperCase() +
-//                 item.packaging.slice(1)
-//           }`
-//       )
-//       .join(", ");
-//   },
-// },
