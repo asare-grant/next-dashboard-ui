@@ -79,9 +79,12 @@ export const getOrders = async () => {
 /* ===============================
    UPDATE ORDER (status / payment)
 ================================ */
+/* ===============================
+   UPDATE ORDER (ORDER STATUS ONLY)
+================================ */
 export const updateOrder = async (
   id: string,
-  data: { orderStatus?: string; paymentStatus?: string }
+  data: { orderStatus: string }
 ) => {
   const res = await fetch(`${API_URL}/api/admin/orders/${id}`, {
     method: "PATCH",
@@ -98,6 +101,25 @@ export const updateOrder = async (
 
   return res.json();
 };
+// export const updateOrder = async (
+//   id: string,
+//   data: { orderStatus?: string; paymentStatus?: string }
+// ) => {
+//   const res = await fetch(`${API_URL}/api/admin/orders/${id}`, {
+//     method: "PATCH",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify(data),
+//   });
+
+//   if (!res.ok) {
+//     throw new Error("Failed to update order");
+//   }
+//   console.log(process.env.NEXT_PUBLIC_APPWRITE_ORDERS_COLLECTION_ID);
+
+//   return res.json();
+// };
 
 /* ===============================
    DELETE ORDER

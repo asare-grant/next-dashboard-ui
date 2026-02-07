@@ -46,6 +46,8 @@ const getPaymentStatusClass = (status: string) => {
       return "bg-green-100 text-green-800 border-green-300";
     case "processing":
       return "bg-yellow-100 text-yellow-800 border-yellow-300";
+    case "failed":
+      return "bg-red-100 text-red-800 border-red-300";
     default:
       return "bg-transparent text-gray-700 border-gray-300";
   }
@@ -90,11 +92,10 @@ export default function OrdersPage() {
 
       mappedOrders.sort(
         (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
 
       setOrders(mappedOrders);
-
     } catch {
       toast.error("Failed to load orders");
     } finally {
@@ -127,8 +128,8 @@ export default function OrdersPage() {
       if (res?.order) {
         setOrders((prev) =>
           prev.map((o) =>
-            o.id === editingOrder.id ? mapOrderFromBackend(res.order) : o
-          )
+            o.id === editingOrder.id ? mapOrderFromBackend(res.order) : o,
+          ),
         );
       } else {
         await fetchOrders(); // safety fallback
@@ -195,22 +196,48 @@ export default function OrdersPage() {
       `}
             value={p.data.orderStatus}
             onChange={async (e) => {
+              const nextStatus = e.target.value;
+
+              if (
+                p.data.paymentStatus !== "paid" &&
+                ["preparing", "on_the_way", "delivered"].includes(nextStatus)
+              ) {
+                toast.error("Cannot process unpaid order");
+                return;
+              }
+
               const prev = p.data.orderStatus;
-              p.data.orderStatus = e.target.value;
+              p.data.orderStatus = nextStatus;
               p.api.refreshCells({ rowNodes: [p.node] });
 
               try {
                 await updateOrder(p.data.id, {
-                  orderStatus: e.target.value,
-                  paymentStatus: p.data.paymentStatus,
+                  orderStatus: nextStatus,
                 });
-                toast.success("Status updated");
+                toast.success("Order status updated");
               } catch {
                 p.data.orderStatus = prev;
                 p.api.refreshCells({ rowNodes: [p.node] });
                 toast.error("Update failed");
               }
             }}
+            // onChange={async (e) => {
+            //   const prev = p.data.orderStatus;
+            //   p.data.orderStatus = e.target.value;
+            //   p.api.refreshCells({ rowNodes: [p.node] });
+
+            //   try {
+            //     await updateOrder(p.data.id, {
+            //       orderStatus: e.target.value,
+            //       paymentStatus: p.data.paymentStatus,
+            //     });
+            //     toast.success("Status updated");
+            //   } catch {
+            //     p.data.orderStatus = prev;
+            //     p.api.refreshCells({ rowNodes: [p.node] });
+            //     toast.error("Update failed");
+            //   }
+            // }}
           >
             {ORDER_STATUSES.map((s) => (
               <option key={s} value={s}>
@@ -220,39 +247,53 @@ export default function OrdersPage() {
           </select>
         ),
       },
+      // {
+      //   headerName: "Payment Status",
+      //   field: "paymentStatus",
+      //   minWidth: 170,
+      //   cellRenderer: (p: any) => (
+      //     <select
+      //       className={`rounded-md border px-2 py-1 text-sm transition
+      //   ${getPaymentStatusClass(p.data.paymentStatus)}
+      // `}
+      //       value={p.data.paymentStatus}
+      //       onChange={async (e) => {
+      //         const prev = p.data.paymentStatus;
+      //         p.data.paymentStatus = e.target.value;
+      //         p.api.refreshCells({ rowNodes: [p.node] });
+
+      //         try {
+      //           await updateOrder(p.data.id, {
+      //             paymentStatus: e.target.value,
+      //           });
+      //           toast.success("Payment updated");
+      //         } catch {
+      //           p.data.paymentStatus = prev;
+      //           p.api.refreshCells({ rowNodes: [p.node] });
+      //           toast.error("Update failed");
+      //         }
+      //       }}
+      //     >
+      //       {PAYMENT_STATUSES.map((s) => (
+      //         <option key={s} value={s}>
+      //           {s.toUpperCase()}
+      //         </option>
+      //       ))}
+      //     </select>
+      //   ),
+      // },
       {
         headerName: "Payment Status",
         field: "paymentStatus",
-        minWidth: 170,
+        minWidth: 160,
         cellRenderer: (p: any) => (
-          <select
-            className={`rounded-md border px-2 py-1 text-sm transition
-        ${getPaymentStatusClass(p.data.paymentStatus)}
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-semibold border
+        ${getPaymentStatusClass(p.value)}
       `}
-            value={p.data.paymentStatus}
-            onChange={async (e) => {
-              const prev = p.data.paymentStatus;
-              p.data.paymentStatus = e.target.value;
-              p.api.refreshCells({ rowNodes: [p.node] });
-
-              try {
-                await updateOrder(p.data.id, {
-                  paymentStatus: e.target.value,
-                });
-                toast.success("Payment updated");
-              } catch {
-                p.data.paymentStatus = prev;
-                p.api.refreshCells({ rowNodes: [p.node] });
-                toast.error("Update failed");
-              }
-            }}
           >
-            {PAYMENT_STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {s.toUpperCase()}
-              </option>
-            ))}
-          </select>
+            {p.value?.toUpperCase()}
+          </span>
         ),
       },
       {
@@ -262,11 +303,29 @@ export default function OrdersPage() {
           if (!p.data || !Array.isArray(p.data.items)) return "—";
 
           const uniquePackaging = Array.from(
-            new Set(p.data.items.map((item) => item.packaging))
+            new Set(p.data.items.map((item) => item.packaging)),
           );
 
           return uniquePackaging.map(formatPackaging).join(", ");
         },
+      },
+      {
+        headerName: "Payment Ref",
+        field: "paymentReference",
+        minWidth: 180,
+        cellRenderer: (p: any) => (
+          <span className="font-mono text-xs">{p.value || "—"}</span>
+        ),
+      },
+      {
+        headerName: "Hubtel Tx ID",
+        field: "hubtelTransactionId",
+        minWidth: 200,
+        cellRenderer: (p: any) => (
+          <span className="font-mono text-xs text-gray-600">
+            {p.value || "—"}
+          </span>
+        ),
       },
       {
         headerName: "Date",
@@ -314,7 +373,7 @@ export default function OrdersPage() {
         ),
       },
     ],
-    [canEdit, canDelete]
+    [canEdit, canDelete],
   );
 
   // useEffect(() => {
@@ -362,7 +421,7 @@ export default function OrdersPage() {
           // Only react to create & update events
           if (
             !event.events.some(
-              (e: string) => e.endsWith(".create") || e.endsWith(".update")
+              (e: string) => e.endsWith(".create") || e.endsWith(".update"),
             )
           ) {
             return;
@@ -390,10 +449,10 @@ export default function OrdersPage() {
             return next.sort(
               (a, b) =>
                 new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime()
+                new Date(a.createdAt).getTime(),
             );
           });
-        }
+        },
       );
     } catch (err) {
       console.warn("Realtime subscription failed", err);
@@ -403,7 +462,6 @@ export default function OrdersPage() {
       if (unsubscribe) unsubscribe();
     };
   }, []);
-
 
   /* ---------------- AG GRID THEME ---------------- */
   const gridTheme = themeQuartz.withParams({
@@ -496,7 +554,6 @@ export default function OrdersPage() {
     </div>
   );
 }
-
 
 //       {
 //   headerName: "Packaging",

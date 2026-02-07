@@ -29,8 +29,14 @@ export interface Order {
   items: OrderItem[];
   total: number;
   deliveryFee: number;
+
   paymentMethod: PaymentMethod;
   paymentStatus: PaymentStatus;
+
+   /** 🔐 Hubtel fields (read-only from admin) */
+  paymentReference?: string | null;
+  hubtelTransactionId?: string | null;
+
   orderStatus: OrderStatus;
   createdAt: string; // ISO
 }
