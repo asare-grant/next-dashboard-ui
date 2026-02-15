@@ -33,7 +33,7 @@ export default function OrderFormModal({
         if (!v) onClose();
       }}
     >
-      <DialogContent className="max-w-xl bg-[#fafafa]">
+      <DialogContent className="max-w-xl bg-[#babd]">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
