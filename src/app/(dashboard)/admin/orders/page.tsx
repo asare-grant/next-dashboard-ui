@@ -26,14 +26,32 @@ import { account } from "@/lib/appwrite-client";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
+const DELIVERY_ORDER_STATUSES = [
+  "pending",
+  "preparing",
+  "on_the_way",
+  "delivered",
+  "cancelled",
+];
+
+const PICKUP_ORDER_STATUSES = [
+  "pending",
+  "preparing",
+  "ready_for_pickup",
+  "picked_up",
+  "cancelled",
+];
+
 const getOrderStatusClass = (status: string) => {
   switch (status) {
     case "preparing":
     case "on_the_way":
+    case "ready_for_pickup":
       return "bg-yellow-100 text-yellow-800 border-yellow-300";
     case "cancelled":
       return "bg-red-100 text-red-800 border-red-300";
     case "delivered":
+    case "picked_up":
       return "bg-green-100 text-green-800 border-green-300";
     default:
       return "bg-transparent text-gray-700 border-gray-300";
@@ -116,9 +134,7 @@ export default function OrdersPage() {
   }, []);
 
   /* ================= SAVE ================= */
-  const handleSaveOrder = async (data: {
-    orderStatus: string;
-  }) => {
+  const handleSaveOrder = async (data: { orderStatus: string }) => {
     if (!editingOrder) return;
 
     try {
@@ -167,12 +183,32 @@ export default function OrdersPage() {
   const columnDefs = useMemo<ColDef<Order>[]>(
     () => [
       { headerName: "Order Ref", field: "id", minWidth: 140 },
-      { headerName: "Customer", field: "customerName", minWidth: 180 },
+      // { headerName: "Customer", field: "customerName", minWidth: 180 },
       {
         headerName: "Total (₵)",
         field: "total",
         minWidth: 120,
         valueFormatter: (p) => `₵${p.value.toFixed(2)}`,
+      },
+      {
+        headerName: "Order Type",
+        field: "fulfillmentType",
+        minWidth: 130,
+        cellRenderer: (p: any) => {
+          const isPickup = p.value === "pickup";
+
+          return (
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+                isPickup
+                  ? "bg-purple-100 text-purple-800 border-purple-300"
+                  : "bg-blue-100 text-blue-800 border-blue-300"
+              }`}
+            >
+              {isPickup ? "PICK UP" : "DELIVERY"}
+            </span>
+          );
+        },
       },
       {
         headerName: "Payment Method",
@@ -184,67 +220,127 @@ export default function OrdersPage() {
           </span>
         ),
       },
+      // {
+      //   headerName: "Order Status",
+      //   field: "orderStatus",
+      //   minWidth: 170,
+      //   cellRenderer: (p: any) => (
+      //     <select
+      //       className={`rounded-md border px-2 py-1 text-sm transition
+      //   ${getOrderStatusClass(p.data.orderStatus)}
+      // `}
+      //       value={p.data.orderStatus}
+      //       onChange={async (e) => {
+      //         const nextStatus = e.target.value;
+
+      //         if (
+      //           p.data.paymentStatus !== "paid" &&
+      //           ["preparing", "on_the_way", "ready_for_pickup", "delivered", "picked_up"].includes(nextStatus)
+      //         ) {
+      //           toast.error("Cannot process unpaid order");
+      //           return;
+      //         }
+
+      //         const prev = p.data.orderStatus;
+      //         p.data.orderStatus = nextStatus;
+      //         p.api.refreshCells({ rowNodes: [p.node] });
+
+      //         try {
+      //           await updateOrder(p.data.id, {
+      //             orderStatus: nextStatus,
+      //           });
+      //           toast.success("Order status updated");
+      //         } catch {
+      //           p.data.orderStatus = prev;
+      //           p.api.refreshCells({ rowNodes: [p.node] });
+      //           toast.error("Update failed");
+      //         }
+      //       }}
+      //       // onChange={async (e) => {
+      //       //   const prev = p.data.orderStatus;
+      //       //   p.data.orderStatus = e.target.value;
+      //       //   p.api.refreshCells({ rowNodes: [p.node] });
+
+      //       //   try {
+      //       //     await updateOrder(p.data.id, {
+      //       //       orderStatus: e.target.value,
+      //       //       paymentStatus: p.data.paymentStatus,
+      //       //     });
+      //       //     toast.success("Status updated");
+      //       //   } catch {
+      //       //     p.data.orderStatus = prev;
+      //       //     p.api.refreshCells({ rowNodes: [p.node] });
+      //       //     toast.error("Update failed");
+      //       //   }
+      //       // }}
+      //     >
+      //       {ORDER_STATUSES.map((s) => (
+      //         <option key={s} value={s}>
+      //           {s.toUpperCase()}
+      //         </option>
+      //       ))}
+      //     </select>
+      //   ),
+      // },
       {
         headerName: "Order Status",
         field: "orderStatus",
         minWidth: 170,
-        cellRenderer: (p: any) => (
-          <select
-            className={`rounded-md border px-2 py-1 text-sm transition
-        ${getOrderStatusClass(p.data.orderStatus)}
-      `}
-            value={p.data.orderStatus}
-            onChange={async (e) => {
-              const nextStatus = e.target.value;
+        cellRenderer: (p: any) => {
+          const fulfillmentType = p.data.fulfillmentType || "delivery";
 
-              if (
-                p.data.paymentStatus !== "paid" &&
-                ["preparing", "on_the_way", "delivered"].includes(nextStatus)
-              ) {
-                toast.error("Cannot process unpaid order");
-                return;
-              }
+          const allowedStatuses =
+            fulfillmentType === "pickup"
+              ? PICKUP_ORDER_STATUSES
+              : DELIVERY_ORDER_STATUSES;
 
-              const prev = p.data.orderStatus;
-              p.data.orderStatus = nextStatus;
-              p.api.refreshCells({ rowNodes: [p.node] });
+          return (
+            <select
+              className={`rounded-md border px-2 py-1 text-sm transition
+          ${getOrderStatusClass(p.data.orderStatus)}
+        `}
+              value={p.data.orderStatus}
+              onChange={async (e) => {
+                const nextStatus = e.target.value;
 
-              try {
-                await updateOrder(p.data.id, {
-                  orderStatus: nextStatus,
-                });
-                toast.success("Order status updated");
-              } catch {
-                p.data.orderStatus = prev;
+                if (
+                  p.data.paymentStatus !== "paid" &&
+                  [
+                    "preparing",
+                    "on_the_way",
+                    "ready_for_pickup",
+                    "delivered",
+                    "picked_up",
+                  ].includes(nextStatus)
+                ) {
+                  toast.error("Cannot process unpaid order");
+                  return;
+                }
+
+                const prev = p.data.orderStatus;
+                p.data.orderStatus = nextStatus;
                 p.api.refreshCells({ rowNodes: [p.node] });
-                toast.error("Update failed");
-              }
-            }}
-            // onChange={async (e) => {
-            //   const prev = p.data.orderStatus;
-            //   p.data.orderStatus = e.target.value;
-            //   p.api.refreshCells({ rowNodes: [p.node] });
 
-            //   try {
-            //     await updateOrder(p.data.id, {
-            //       orderStatus: e.target.value,
-            //       paymentStatus: p.data.paymentStatus,
-            //     });
-            //     toast.success("Status updated");
-            //   } catch {
-            //     p.data.orderStatus = prev;
-            //     p.api.refreshCells({ rowNodes: [p.node] });
-            //     toast.error("Update failed");
-            //   }
-            // }}
-          >
-            {ORDER_STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {s.toUpperCase()}
-              </option>
-            ))}
-          </select>
-        ),
+                try {
+                  await updateOrder(p.data.id, {
+                    orderStatus: nextStatus,
+                  });
+                  toast.success("Order status updated");
+                } catch {
+                  p.data.orderStatus = prev;
+                  p.api.refreshCells({ rowNodes: [p.node] });
+                  toast.error("Update failed");
+                }
+              }}
+            >
+              {allowedStatuses.map((s) => (
+                <option key={s} value={s}>
+                  {s.toUpperCase()}
+                </option>
+              ))}
+            </select>
+          );
+        },
       },
       // {
       //   headerName: "Payment Status",
@@ -374,7 +470,6 @@ export default function OrdersPage() {
     ],
     [canEdit, canDelete],
   );
-
 
   useEffect(() => {
     let unsubscribe: (() => void) | null = null;
@@ -521,4 +616,3 @@ export default function OrdersPage() {
     </div>
   );
 }
-

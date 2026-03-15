@@ -233,7 +233,9 @@ export default function OrderForm({ initialData, onSubmit, onCancel }: Props) {
           <option value="pending">Pending</option>
           <option value="preparing">Preparing</option>
           <option value="on_the_way">On The Way</option>
+          <option value="ready_for_pickup">Ready For Pickup</option>
           <option value="delivered">Delivered</option>
+          <option value="picked_up">Picked Up</option>
           <option value="cancelled">Cancelled</option>
         </select>
       </div>

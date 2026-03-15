@@ -11,6 +11,7 @@ export const mapOrderFromBackend = (order: any): Order => {
     items: Array.isArray(order.items) ? order.items : [],
     total: order.total ?? 0,
     deliveryFee: order.deliveryFee ?? 0,
+    fulfillmentType: order.fulfillmentType ?? "delivery",
 
     paymentMethod: order.paymentMethod ?? "momo",
     paymentStatus: order.paymentStatus ?? "pending",

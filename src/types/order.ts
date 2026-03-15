@@ -5,7 +5,9 @@ export type OrderStatus =
   | "paid"
   | "preparing"
   | "on_the_way"
+  | "ready_for_pickup"
   | "delivered"
+  | "picked_up"
   | "cancelled";
 
 export type PackagingType = "leaf" | "pack" | "pack_leaf";
@@ -20,6 +22,7 @@ export interface OrderItem {
   packaging: PackagingType; // ✅ ADD THIS
   drinks?: string[];
   customizations?: string[];
+  fulfillmentType?: String,
 }
 
 export interface Order {
@@ -29,6 +32,7 @@ export interface Order {
   items: OrderItem[];
   total: number;
   deliveryFee: number;
+  fulfillmentType?: String;
 
   paymentMethod: PaymentMethod;
   paymentStatus: PaymentStatus;
