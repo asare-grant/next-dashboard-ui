@@ -9,7 +9,7 @@ import {
   AllCommunityModule,
 } from "ag-grid-community";
 import { Button } from "@/components/ui/button";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Eye, Pencil, Printer, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { Order } from "@/types/order";
@@ -189,6 +189,35 @@ export default function OrdersPage() {
         field: "total",
         minWidth: 120,
         valueFormatter: (p) => `₵${p.value.toFixed(2)}`,
+      },
+      {
+        headerName: "Order Timing",
+        field: "timingType",
+        minWidth: 130,
+        cellRenderer: (p: any) => {
+          const isScheduled = p.value === "scheduled";
+
+          return (
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+                isScheduled
+                  ? "bg-amber-100 text-amber-800 border-amber-300"
+                  : "bg-slate-100 text-slate-700 border-slate-300"
+              }`}
+            >
+              {isScheduled ? "PREORDER" : "ASAP"}
+            </span>
+          );
+        },
+      },
+      {
+        headerName: "Scheduled For",
+        field: "scheduledAt",
+        minWidth: 190,
+        valueFormatter: (p) => {
+          if (!p.value) return "—";
+          return new Date(p.value).toLocaleString("en-GB");
+        },
       },
       {
         headerName: "Order Type",
@@ -413,6 +442,22 @@ export default function OrdersPage() {
         ),
       },
       {
+        headerName: "Customer Phone",
+        field: "customerPhone",
+        minWidth: 160,
+        cellRenderer: (p: any) =>
+          p.value ? (
+            <a
+              href={`tel:${p.value}`}
+              className="font-mono text-sm text-blue-700 hover:underline"
+            >
+              {p.value}
+            </a>
+          ) : (
+            <span>—</span>
+          ),
+      },
+      {
         headerName: "Hubtel Tx ID",
         field: "hubtelTransactionId",
         minWidth: 200,
@@ -434,7 +479,7 @@ export default function OrdersPage() {
         cellRenderer: (p: any) => (
           <div className="row-actions flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
             <Button size="icon" variant="outline" className="bg-blue-200">
-              <Eye size={16} />
+              <Printer size={16} />
             </Button>
             {/* UPDATE – admin & manager */}
             {canEdit && (
