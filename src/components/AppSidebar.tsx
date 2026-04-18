@@ -151,7 +151,7 @@ const AppSidebar = () => {
                       <SidebarMenuButton asChild>
                         <Link
                           href={item.href}
-                          className={`flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-indigo-100 dark:hover:bg-[#0003] hover:text-[#08581480] ${
+                          className={`flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-indigo-100 dark:hover:bg-[#ffffff30] hover:text-[#08581480] ${
                             pathname === item.href
                               ? "bg-indigo-50 dark:bg-black/10 text-[#08581480]"
                               : ""
