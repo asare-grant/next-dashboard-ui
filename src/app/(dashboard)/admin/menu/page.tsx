@@ -330,11 +330,11 @@ export default function MenuPage() {
   });
 
   return (
-    <div className="bg-white rounded-xl p-4 m-4 mt-0 min-h-[600px]">
+    <div className="bg-gray-100 rounded-xl p-4 m-4 mt-0 min-h-[600px]">
       {/* HEADER */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="text-2xl font-semibold">Menu</h1>
+          <h1 className="text-2xl font-semibold text-blue-300">Menu</h1>
           <p className="text-sm text-muted-foreground">
             Manage all food and drink items
           </p>

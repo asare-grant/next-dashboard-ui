@@ -26,7 +26,7 @@ export default function DeleteCategoryDialog({
 }: Props) {
   return (
     <AlertDialog open={open} onOpenChange={onClose}>
-      <AlertDialogContent className="bg-[#babd]">
+      <AlertDialogContent className="bg-[#f8f8f8]">
         <AlertDialogHeader>
           <AlertDialogTitle>
             Delete Category?

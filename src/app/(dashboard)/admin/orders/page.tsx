@@ -101,6 +101,9 @@ export default function OrdersPage() {
   const canEdit = role === "admin" || role === "manager";
   const canDelete = role === "admin";
 
+  const [itemsModalOpen, setItemsModalOpen] = useState(false);
+  const [selectedItems, setSelectedItems] = useState<any[]>([]);
+
   /* ================= FETCH ORDERS ================= */
   const fetchOrders = async () => {
     try {
@@ -178,6 +181,8 @@ export default function OrdersPage() {
       setOrderToDelete(null);
     }
   };
+
+  
 
   /* ---------------- COLUMN DEFINITIONS ---------------- */
   const columnDefs = useMemo<ColDef<Order>[]>(
@@ -421,6 +426,25 @@ export default function OrdersPage() {
         ),
       },
       {
+        headerName: "Items",
+        minWidth: 180,
+        cellRenderer: (p: any) => {
+          const items = p.data.items || [];
+
+          return (
+            <button
+              className="text-blue-600 underline text-sm"
+              onClick={() => {
+                setSelectedItems(items);
+                setItemsModalOpen(true);
+              }}
+            >
+              View Items ({items.length})
+            </button>
+          );
+        },
+      },
+      {
         headerName: "Packaging",
         minWidth: 180,
         valueGetter: (p) => {
@@ -603,10 +627,10 @@ export default function OrdersPage() {
   );
 
   return (
-    <div className="bg-white rounded-xl p-4 m-4 mt-0 flex-1">
+    <div className="bg-gray-100 rounded-xl p-4 m-4 mt-0 flex-1">
       {/* HEADER */}
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-lg font-semibold">Orders</h1>
+        <h1 className="text-lg font-semibold text-blue-300">Orders</h1>
       </div>
 
       {/* GRID */}
@@ -651,6 +675,57 @@ export default function OrdersPage() {
           onSubmit={handleSaveOrder}
         />
       )}
+
+      {
+    itemsModalOpen && (
+      <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+        <div className="bg-white rounded-xl p-6 w-[500px] max-h-[80vh] overflow-y-auto">
+          <h2 className="text-lg font-semibold mb-4">Order Items</h2>
+
+          {selectedItems.map((item, index) => {
+            const customizations = item.customizations
+              ? JSON.parse(item.customizations)
+              : [];
+
+            return (
+              <div
+                key={index}
+                className="border rounded-lg p-3 mb-3 bg-gray-50"
+              >
+                <p className="font-semibold">{item.name}</p>
+
+                <p className="text-sm">
+                  Quantity: <strong>{item.quantity}</strong>
+                </p>
+
+                <p className="text-sm">
+                  Packaging: <strong>{formatPackaging(item.packaging)}</strong>
+                </p>
+
+                <p className="text-sm">Unit Price: ₵{item.unitPrice}</p>
+
+                {/* CUSTOMIZATIONS */}
+                {customizations.length > 0 && (
+                  <div className="text-sm mt-1">
+                    <p className="font-medium">Customizations:</p>
+                    <ul className="list-disc ml-4">
+                      {customizations.map((c: string, i: number) => (
+                        <li key={i}>{c}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
+          <div className="flex justify-end mt-4">
+            <Button onClick={() => setItemsModalOpen(false)}>Close</Button>
+          </div>
+        </div>
+      </div>
+    )
+  };
 
       <DeleteOrderDialog
         open={deleteOpen}

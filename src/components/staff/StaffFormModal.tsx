@@ -25,7 +25,7 @@ export default function StaffFormModal({
 }: Props) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-xl bg-[#babd]">
+      <DialogContent className="max-w-xl bg-[#f8f8f8]">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>

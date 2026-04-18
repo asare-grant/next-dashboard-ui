@@ -27,7 +27,7 @@ export default function MenuFormModal({
 }: Props) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-xl h-[100vh] max-h-[95vh] p-0 bg-[#babd] flex flex-col">
+      <DialogContent className="max-w-xl h-[100vh] max-h-[95vh] p-0 bg-[#f8f8f8] flex flex-col">
         {/* HEADER (fixed) */}
         <DialogHeader className="px-6 py-4 border-b">
           <DialogTitle>{title}</DialogTitle>

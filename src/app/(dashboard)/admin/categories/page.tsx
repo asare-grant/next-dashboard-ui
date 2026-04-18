@@ -240,10 +240,10 @@ export default function CategoriesPage() {
 
   /* ---------------- RENDER ---------------- */
   return (
-    <div className="bg-white rounded-xl p-4 m-4 mt-0 flex-1">
+    <div className="bg-gray-100 rounded-xl p-4 m-4 mt-0 flex-1">
       {/* HEADER */}
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-lg font-semibold">Categories</h1>
+        <h1 className="text-lg font-semibold text-blue-300">Categories</h1>
         <Button className="bg-blue-300 text-white" onClick={openCreateModal}>
           <Plus className="mr-2 h-4 w-4" />
           Add Category

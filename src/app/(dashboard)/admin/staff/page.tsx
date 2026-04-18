@@ -588,10 +588,10 @@ export default function StaffPage() {
 
   /* ---------------- RENDER ---------------- */
   return (
-    <div className="bg-white rounded-xl p-4 m-4 mt-0 flex-1">
+    <div className="bg-gray-100 rounded-xl p-4 m-4 mt-0 flex-1">
       {/* HEADER */}
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-lg font-semibold">Staff</h1>
+        <h1 className="text-lg font-semibold text-blue-300">Staff</h1>
         <Button
           className="bg-blue-300 text-white"
           onClick={openCreateModal}

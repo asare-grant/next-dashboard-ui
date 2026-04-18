@@ -38,6 +38,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { logout } from "@/lib/auth/logout";
+import colors from "@/config/colors";
 
 /* =========================
    TYPES
@@ -108,7 +109,7 @@ const AppSidebar = () => {
   if (!user) return null; // Prevent flash
 
   return (
-    <Sidebar collapsible="icon" className="bg-[#babdcc]">
+    <Sidebar collapsible="icon" className="bg-[#f8f8f8]">
       {/* HEADER */}
       <SidebarHeader className="py-4">
         <SidebarMenu>
@@ -122,21 +123,21 @@ const AppSidebar = () => {
                   width={40}
                   height={40}
                 />
-                <span className="font-semibold tracking-wide">RAAJ FOOD</span>
+                <span className="font-semibold tracking-wide text-blue-600">RAAJ FOOD</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarSeparator />
+      <SidebarSeparator className="bg-gray-300"/>
 
       {/* CONTENT */}
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Management</SidebarGroupLabel>
+          <SidebarGroupLabel className="mt-4 mb-2">Management</SidebarGroupLabel>
           <SidebarGroupAction>
-            <BookOpen className="h-4 w-4 text-[#17972a80]" />
+            <BookOpen className="h-4 w-4 text-[#17972a80] mt-4 mb-2" />
           </SidebarGroupAction>
 
           <SidebarGroupContent>
@@ -152,7 +153,7 @@ const AppSidebar = () => {
                           href={item.href}
                           className={`flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-indigo-100 hover:text-[#08581480] ${
                             pathname === item.href
-                              ? "bg-[#ffffff35] text-[#08581480]"
+                              ? "bg-indigo-50 text-[#08581480]"
                               : ""
                           }`}
                         >
