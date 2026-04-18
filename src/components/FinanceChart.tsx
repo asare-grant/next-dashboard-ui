@@ -24,7 +24,7 @@ type Props = {
 
 const FinanceChart = ({ data }: Props) => {
   return (
-    <div className="bg-muted rounded-xl w-full h-full p-4">
+    <div className="bg-muted dark:shadow-md rounded-xl w-full h-full p-4">
       <div className="flex justify-between items-center">
         <h1 className="text-lg font-semibold">Finance</h1>
         <Image src="/moreDark.png" alt="more" width={20} height={20} />

@@ -2,7 +2,7 @@
 
 const TopSellingMealsTable = ({ data }: { data: any[] }) => {
   return (
-    <div className="bg-muted rounded-xl p-4 h-full shadow-sm">
+    <div className="bg-muted rounded-xl p-4 h-full shadow-sm dark:shadow-md">
       <h2 className="text-lg font-semibold mb-4">Top Selling Meals</h2>
 
       <div className="overflow-x-auto">
