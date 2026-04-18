@@ -27,7 +27,7 @@ export default function CategoryFormModal({
 }: Props) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg bg-[#f8f8f8]">
+      <DialogContent className="max-w-lg bg-background text-foreground]">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>

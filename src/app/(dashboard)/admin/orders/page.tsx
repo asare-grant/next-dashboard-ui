@@ -480,14 +480,14 @@ export default function OrdersPage() {
           return uniquePackaging.map(formatPackaging).join(", ");
         },
       },
-      {
-        headerName: "Payment Ref",
-        field: "paymentReference",
-        minWidth: 180,
-        cellRenderer: (p: any) => (
-          <span className="font-mono text-xs">{p.value || "—"}</span>
-        ),
-      },
+      // {
+      //   headerName: "Payment Ref",
+      //   field: "paymentReference",
+      //   minWidth: 180,
+      //   cellRenderer: (p: any) => (
+      //     <span className="font-mono text-xs">{p.value || "—"}</span>
+      //   ),
+      // },
       {
         headerName: "Customer Phone",
         field: "customerPhone",

@@ -20,6 +20,7 @@ import {
 } from "@/lib/api/categories";
 import { uploadCategoryImage } from "@/lib/appwrite-upload";
 
+import { useTheme } from "next-themes";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -40,12 +41,14 @@ export default function CategoriesPage() {
   const [loading, setLoading] = useState(true);
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [editingCategory, setEditingCategory] =
-    useState<Category | null>(null);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [categoryToDelete, setCategoryToDelete] =
-    useState<Category | null>(null);
+  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(
+    null,
+  );
+
+  const { theme } = useTheme();
 
   /* ---------------- FETCH DATA ---------------- */
   const fetchAllCategories = async () => {
@@ -103,7 +106,7 @@ export default function CategoriesPage() {
         });
 
         setCategories((prev) =>
-          prev.map((c) => (c.$id === editingCategory.$id ? res.category : c))
+          prev.map((c) => (c.$id === editingCategory.$id ? res.category : c)),
         );
 
         toast.success("Category updated");
@@ -133,7 +136,7 @@ export default function CategoriesPage() {
     try {
       await deleteCategory(categoryToDelete.$id);
       setCategories((prev) =>
-        prev.filter((c) => c.$id !== categoryToDelete.$id)
+        prev.filter((c) => c.$id !== categoryToDelete.$id),
       );
       toast.success("Category deleted");
     } catch {
@@ -145,86 +148,93 @@ export default function CategoriesPage() {
   };
 
   /* ---------------- GRID ---------------- */
-  const columnDefs = useMemo<ColDef<Category>[]>(() => [
-    {
-      headerName: "Image",
-      field: "image",
-      width: 90,
-      cellRenderer: (params: any) => (
-        <div className="flex items-center justify-center h-full w-full">
-          {params.value ? (
-            <Image
-              src={params.value}
-              alt={params.data.name}
-              width={40}
-              height={40}
-              className="rounded-md object-cover"
-            />
-          ) : (
-            <div className="w-10 h-10 bg-gray-200 rounded-md" />
-          )}
-        </div>
-      ),
-    },
-    {
-      field: "name",
-      filter: true,
-      sortable: true,
-      flex: 1,
-    },
-    {
-      field: "description",
-      filter: true,
-      flex: 2,
-    },
-    {
-      headerName: "Actions",
-      width: 140,
-      cellRenderer: (params: any) => (
-        <div className="row-actions flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-          <Button
-            size="icon"
-            variant="outline"
-            className="bg-green-300"
-            onClick={() => openEditModal(params.data)}
-          >
-            <Pencil size={16} />
-          </Button>
-          <Button
-            size="icon"
-            variant="destructive"
-            className="bg-red-300"
-            onClick={() => requestDelete(params.data)}
-          >
-            <Trash2 size={16} />
-          </Button>
-        </div>
-      ),
-    },
-  ], []);
+  const columnDefs = useMemo<ColDef<Category>[]>(
+    () => [
+      {
+        headerName: "Image",
+        field: "image",
+        width: 90,
+        cellRenderer: (params: any) => (
+          <div className="flex items-center justify-center h-full w-full">
+            {params.value ? (
+              <Image
+                src={params.value}
+                alt={params.data.name}
+                width={40}
+                height={40}
+                className="rounded-md object-cover"
+              />
+            ) : (
+              <div className="w-10 h-10 bg-gray-200 rounded-md" />
+            )}
+          </div>
+        ),
+      },
+      {
+        field: "name",
+        filter: true,
+        sortable: true,
+        flex: 1,
+      },
+      {
+        field: "description",
+        filter: true,
+        flex: 2,
+      },
+      {
+        headerName: "Actions",
+        width: 140,
+        cellRenderer: (params: any) => (
+          <div className="row-actions flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
+            <Button
+              size="icon"
+              variant="outline"
+              className="bg-green-300"
+              onClick={() => openEditModal(params.data)}
+            >
+              <Pencil size={16} />
+            </Button>
+            <Button
+              size="icon"
+              variant="destructive"
+              className="bg-red-300"
+              onClick={() => requestDelete(params.data)}
+            >
+              <Trash2 size={16} />
+            </Button>
+          </div>
+        ),
+      },
+    ],
+    [],
+  );
 
-  const gridTheme = themeQuartz.withParams({
-    spacing: 6,
-    rowBorder: true,
-    foregroundColor: "#1f2937",
-    backgroundColor: "#ffffff",
-    headerBackgroundColor: "#f1f5f9",
-    rowHoverColor: "#e0e7ff",
-    borderRadius: 12,
-    borderWidth: 2,
-  });
+  const gridTheme = useMemo(() => {
+    const isDark = theme === "dark";
+
+    return themeQuartz.withParams({
+      spacing: 6,
+      rowBorder: true,
+      foregroundColor: isDark ? "#e5e7eb" : "#1f2937",
+      backgroundColor: isDark ? "#020617" : "#ffffff",
+      headerBackgroundColor: isDark ? "#020617" : "#f1f5f9",
+      rowHoverColor: isDark ? "#1e293b" : "#e0e7ff",
+      borderRadius: 12,
+      borderWidth: 2,
+    });
+  }, [theme]);
 
   /* ---------------- UI STATES ---------------- */
   const LoadingState = () => (
-    <div className="flex flex-col items-center justify-center h-[520px] text-gray-500">
-      <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-300 border-t-primary mb-4" />
+    <div className="flex flex-col items-center justify-center h-[520px] text-foreground">
+      <div className="animate-spin rounded-full h-10 w-10 border-4 border-border border-t-primary mb-4" />
       <p className="text-sm">Loading categories...</p>
     </div>
   );
 
   const EmptyState = () => (
     <div className="flex flex-col items-center justify-center h-[520px] text-center">
-      <div className="w-16 h-16 mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+      <div className="w-16 h-16 mb-4 rounded-full bg-muted flex items-center justify-center">
         📂
       </div>
       <h2 className="text-lg font-semibold">No categories yet</h2>
@@ -240,7 +250,7 @@ export default function CategoriesPage() {
 
   /* ---------------- RENDER ---------------- */
   return (
-    <div className="bg-gray-100 rounded-xl p-4 m-4 mt-0 flex-1">
+   <div className="bg-muted rounded-xl p-4 m-4 mt-0 flex-1">
       {/* HEADER */}
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-lg font-semibold text-blue-300">Categories</h1>

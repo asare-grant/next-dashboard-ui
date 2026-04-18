@@ -114,7 +114,7 @@ const statusColor = (status: string) => {
 
 const RecentOrdersWidget = ({ data }: Props) => {
   return (
-    <div className="bg-gray-50 rounded-xl p-4 h-full shadow-sm">
+    <div className="bg-muted rounded-xl p-4 h-full shadow-sm">
       <h2 className="text-lg font-semibold mb-4">
         Recent Orders
       </h2>
@@ -127,7 +127,7 @@ const RecentOrdersWidget = ({ data }: Props) => {
           >
             <div>
               <p className="font-medium">{order.customer}</p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-foreground">
                 {order.id} • {order.time}
               </p>
             </div>

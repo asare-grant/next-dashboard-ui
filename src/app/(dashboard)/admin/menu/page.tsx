@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { AgGridReact } from "ag-grid-react";
 import {
   ColDef,
@@ -18,6 +18,7 @@ import MenuFormModal from "@/components/menu/MenuFormModal";
 import DeleteMenuDialog from "@/components/menu/DeleteMenuDialog";
 import { getMenus, createMenu, updateMenu, deleteMenu } from "@/lib/api/menu";
 import { uploadMenuImage } from "@/lib/appwrite-upload";
+import { useTheme } from "next-themes";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -47,6 +48,7 @@ export default function MenuPage() {
   const [editingMenu, setEditingMenu] = useState<MenuItem | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [menuToDelete, setMenuToDelete] = useState<MenuItem | null>(null);
+   const { theme } = useTheme();
 
   /* ---------------- FETCH ---------------- */
 
@@ -318,19 +320,23 @@ export default function MenuPage() {
   ];
 
   /* ---------------- AG GRID THEME ---------------- */
-  const gridTheme = themeQuartz.withParams({
-    spacing: 6,
-    rowBorder: true,
-    foregroundColor: "#1f2937",
-    backgroundColor: "#ffffff",
-    headerBackgroundColor: "#f1f5f9",
-    rowHoverColor: "#e0e7ff",
-    borderRadius: 12,
-    borderWidth: 2,
-  });
+  const gridTheme = useMemo(() => {
+    const isDark = theme === "dark";
+  
+    return themeQuartz.withParams({
+      spacing: 6,
+      rowBorder: true,
+      foregroundColor: isDark ? "#e5e7eb" : "#1f2937",
+      backgroundColor: isDark ? "#020617" : "#ffffff",
+      headerBackgroundColor: isDark ? "#020617" : "#f1f5f9",
+      rowHoverColor: isDark ? "#1e293b" : "#e0e7ff",
+      borderRadius: 12,
+      borderWidth: 2,
+    });
+  }, [theme]);
 
   return (
-    <div className="bg-gray-100 rounded-xl p-4 m-4 mt-0 min-h-[600px]">
+    <div className="bg-muted rounded-xl p-4 m-4 mt-0 min-h-[600px]">
       {/* HEADER */}
       <div className="flex items-center justify-between mb-4">
         <div>
@@ -395,7 +401,7 @@ export default function MenuPage() {
 
 const LoadingState = () => (
   <div className="flex flex-col items-center justify-center h-[520px] text-muted-foreground">
-    <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-primary mb-4" />
+    <div className="h-10 w-10 animate-spin rounded-full border-4 border-border border-t-primary mb-4" />
     <p className="text-sm">Loading menu items...</p>
   </div>
 );

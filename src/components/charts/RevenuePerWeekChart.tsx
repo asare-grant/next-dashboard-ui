@@ -77,7 +77,7 @@ type Props = {
 
 const RevenuePerWeekChart = ({ data }: Props) => {
   return (
-    <div className="bg-gray-50 rounded-xl p-4 h-[380px] shadow-sm">
+    <div className="bg-muted rounded-xl p-4 h-[380px] shadow-sm">
       <h2 className="text-lg font-semibold mb-4">
         Revenue Per Week (₵)
       </h2>

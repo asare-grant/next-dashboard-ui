@@ -61,7 +61,7 @@ import {
 
 const OrdersPerDayChart = ({ data }: { data: any[] }) => {
   return (
-    <div className="bg-gray-50 shadow-sm rounded-xl p-4 h-[380px]">
+    <div className="bg-muted shadow-sm rounded-xl p-4 h-[380px]">
       <h2 className="text-lg font-semibold mb-4">Orders Per Day</h2>
 
       <ResponsiveContainer width="100%" height="85%">

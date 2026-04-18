@@ -19,7 +19,7 @@ const AdminPage = async () => {
   const dashboard = await getAdminDashboard();
 
   return (
-    <div className="p-4 flex gap-4 flex-col bg-gray-50 overflow-hidden">
+    <div className="p-4 flex gap-4 flex-col bg-muted overflow-hidden">
       {/* METRICS */}
       <div className="flex gap-4 justify-between flex-wrap">
         <UserCard label="Revenue Today" value={`₵${dashboard.metrics.revenueToday}`} />
