@@ -719,7 +719,7 @@ export default function OrdersPage() {
         />
       )}
       {itemsModalOpen && (
-        <div className="fixed inset-0 bg-background flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-card text-card-foreground rounded-xl p-6 w-[500px] max-h-[80vh] overflow-y-auto">
             <h2 className="text-lg font-semibold mb-4">Order Items</h2>
 
@@ -731,7 +731,7 @@ export default function OrdersPage() {
               return (
                 <div
                   key={index}
-                  className="border rounded-lg p-3 mb-3 bg-gray-50"
+                  className="border rounded-lg p-3 mb-3 bg-muted text-muted-foreground"
                 >
                   <p className="font-semibold">{item.name}</p>
 
