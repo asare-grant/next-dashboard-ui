@@ -720,7 +720,7 @@ export default function OrdersPage() {
       )}
       {itemsModalOpen && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-card text-card-foreground rounded-xl p-6 w-[500px] max-h-[80vh] overflow-y-auto">
+          <div className="bg-card rounded-xl p-6 w-[500px] max-h-[80vh] overflow-y-auto">
             <h2 className="text-lg font-semibold mb-4">Order Items</h2>
 
             {selectedItems.map((item, index) => {
