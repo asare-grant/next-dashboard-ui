@@ -58,7 +58,7 @@ export default async function DashboardLayout({
       <ThemeProvider attribute="class" defaultTheme="system">
         <SidebarProvider defaultOpen={defaultOpen}>
           <AppSidebar />
-          <div className="w-full overflow-scroll bg-[#f8f8f8]">
+          <div className="w-full overflow-scroll bg-background">
             <Navbar />
             {children}
           </div>

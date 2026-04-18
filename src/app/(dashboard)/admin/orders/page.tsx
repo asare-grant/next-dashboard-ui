@@ -21,8 +21,11 @@ import { OrderFormValues } from "@/components/orders/OrderForm";
 import DeleteOrderDialog from "@/components/orders/DeleteOrderDialog";
 import { ORDER_STATUSES, PAYMENT_STATUSES } from "@/constants/order-status";
 
+
 import client from "@/lib/appwrite-client";
 import { account } from "@/lib/appwrite-client";
+import Image from "next/image";
+import { useTheme } from "next-themes";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -49,7 +52,7 @@ const getOrderStatusClass = (status: string) => {
     case "ready_for_pickup":
       return "bg-yellow-100 text-yellow-800 border-yellow-300";
     case "cancelled":
-      return "bg-red-100 text-red-800 border-red-300";
+      return "bg-red-100 text-red-800 border-red-300 ";
     case "delivered":
     case "picked_up":
       return "bg-green-100 text-green-800 border-green-300";
@@ -103,6 +106,11 @@ export default function OrdersPage() {
 
   const [itemsModalOpen, setItemsModalOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
+
+  const [printOpen, setPrintOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
+  const { theme } = useTheme();
 
   /* ================= FETCH ORDERS ================= */
   const fetchOrders = async () => {
@@ -182,7 +190,22 @@ export default function OrdersPage() {
     }
   };
 
-  
+  //   Kitchen print receipt function
+  const handlePrintNow = () => {
+    const printContents = document.getElementById("print-area")?.innerHTML;
+
+    const originalContents = document.body.innerHTML;
+
+    if (!printContents) return;
+
+    document.body.innerHTML = printContents;
+
+    window.print();
+
+    document.body.innerHTML = originalContents;
+
+    window.location.reload(); // ensures React restores properly
+  };
 
   /* ---------------- COLUMN DEFINITIONS ---------------- */
   const columnDefs = useMemo<ColDef<Order>[]>(
@@ -502,7 +525,15 @@ export default function OrdersPage() {
         minWidth: 120,
         cellRenderer: (p: any) => (
           <div className="row-actions flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-            <Button size="icon" variant="outline" className="bg-blue-200">
+            <Button
+              size="icon"
+              variant="outline"
+              className="bg-blue-200"
+              onClick={() => {
+                setSelectedOrder(p.data);
+                setPrintOpen(true);
+              }}
+            >
               <Printer size={16} />
             </Button>
             {/* UPDATE – admin & manager */}
@@ -595,44 +626,57 @@ export default function OrdersPage() {
   }, []);
 
   /* ---------------- AG GRID THEME ---------------- */
-  const gridTheme = themeQuartz.withParams({
+  // const gridTheme = themeQuartz.withParams({
+  //   spacing: 6,
+  //   rowBorder: true,
+  //   foregroundColor: "#1f2937",
+  //   backgroundColor: "#ffffff",
+  //   headerBackgroundColor: "#f1f5f9",
+  //   rowHoverColor: "#e0e7ff",
+  //   borderRadius: 12,
+  //   borderWidth: 2,
+  // });
+  const gridTheme = useMemo(() => {
+  const isDark = theme === "dark";
+
+  return themeQuartz.withParams({
     spacing: 6,
     rowBorder: true,
-    foregroundColor: "#1f2937",
-    backgroundColor: "#ffffff",
-    headerBackgroundColor: "#f1f5f9",
-    rowHoverColor: "#e0e7ff",
+    foregroundColor: isDark ? "#e5e7eb" : "#1f2937",
+    backgroundColor: isDark ? "#020617" : "#ffffff",
+    headerBackgroundColor: isDark ? "#020617" : "#f1f5f9",
+    rowHoverColor: isDark ? "#1e293b" : "#e0e7ff",
     borderRadius: 12,
     borderWidth: 2,
   });
+}, [theme]);
 
   /* ---------------- LOADING & EMPTY STATES ---------------- */
   const LoadingState = () => (
-    <div className="flex flex-col items-center justify-center h-[520px] text-gray-500">
-      <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-300 border-t-primary mb-4" />
+    <div className="flex flex-col items-center justify-center h-[520px] text-foreground">
+      <div className="animate-spin rounded-full h-10 w-10 border-4 border-border border-t-primary mb-4" />
       <p className="text-sm">Loading orders...</p>
     </div>
   );
 
   const EmptyState = () => (
     <div className="flex flex-col items-center justify-center h-[520px] text-center">
-      <div className="w-16 h-16 mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+      <div className="w-16 h-16 mb-4 rounded-full bg-muted flex items-center justify-center">
         🛒
       </div>
       <h2 className="text-lg font-semibold">No orders yet</h2>
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-foreground">
         Orders will appear here once customers place them.
       </p>
     </div>
   );
 
   return (
-    <div className="bg-gray-100 rounded-xl p-4 m-4 mt-0 flex-1">
+    <div className="bg-muted rounded-xl p-4 m-4 mt-0 flex-1">
       {/* HEADER */}
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-lg font-semibold text-blue-300">Orders</h1>
       </div>
-
       {/* GRID */}
       {loading ? (
         <LoadingState />
@@ -659,7 +703,6 @@ export default function OrdersPage() {
           />
         </div>
       )}
-
       {/* MODALS */}
       {editingOrder && (
         <OrderFormModal
@@ -675,57 +718,129 @@ export default function OrdersPage() {
           onSubmit={handleSaveOrder}
         />
       )}
+      {itemsModalOpen && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-card text-card-foreground rounded-xl p-6 w-[500px] max-h-[80vh] overflow-y-auto">
+            <h2 className="text-lg font-semibold mb-4">Order Items</h2>
 
-      {
-    itemsModalOpen && (
-      <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-        <div className="bg-white rounded-xl p-6 w-[500px] max-h-[80vh] overflow-y-auto">
-          <h2 className="text-lg font-semibold mb-4">Order Items</h2>
+            {selectedItems.map((item, index) => {
+              const customizations = item.customizations
+                ? JSON.parse(item.customizations)
+                : [];
 
-          {selectedItems.map((item, index) => {
-            const customizations = item.customizations
-              ? JSON.parse(item.customizations)
-              : [];
+              return (
+                <div
+                  key={index}
+                  className="border rounded-lg p-3 mb-3 bg-gray-50"
+                >
+                  <p className="font-semibold">{item.name}</p>
 
-            return (
-              <div
-                key={index}
-                className="border rounded-lg p-3 mb-3 bg-gray-50"
-              >
-                <p className="font-semibold">{item.name}</p>
+                  <p className="text-sm">
+                    Quantity: <strong>{item.quantity}</strong>
+                  </p>
 
-                <p className="text-sm">
-                  Quantity: <strong>{item.quantity}</strong>
-                </p>
+                  <p className="text-sm">
+                    Packaging:{" "}
+                    <strong>{formatPackaging(item.packaging)}</strong>
+                  </p>
 
-                <p className="text-sm">
-                  Packaging: <strong>{formatPackaging(item.packaging)}</strong>
-                </p>
+                  <p className="text-sm">Unit Price: ₵{item.unitPrice}</p>
 
-                <p className="text-sm">Unit Price: ₵{item.unitPrice}</p>
+                  {/* CUSTOMIZATIONS */}
+                  {customizations.length > 0 && (
+                    <div className="text-sm mt-1">
+                      <p className="font-medium">Customizations:</p>
+                      <ul className="list-disc ml-4">
+                        {customizations.map((c: string, i: number) => (
+                          <li key={i}>{c}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
 
-                {/* CUSTOMIZATIONS */}
-                {customizations.length > 0 && (
-                  <div className="text-sm mt-1">
-                    <p className="font-medium">Customizations:</p>
-                    <ul className="list-disc ml-4">
-                      {customizations.map((c: string, i: number) => (
-                        <li key={i}>{c}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-
-          <div className="flex justify-end mt-4">
-            <Button onClick={() => setItemsModalOpen(false)}>Close</Button>
+            <div className="flex justify-end mt-4">
+              <Button onClick={() => setItemsModalOpen(false)}>Close</Button>
+            </div>
           </div>
         </div>
-      </div>
-    )
-  };
+      )};
+
+
+      {printOpen && selectedOrder && (
+        <div className="fixed inset-0 z-50 flex justify-end">
+          {/* BACKDROP */}
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setPrintOpen(false)}
+          />
+
+          {/* PANEL */}
+          <div className="relative w-[350px] h-full bg-card text-card-foreground shadow-xl p-4 overflow-y-auto">
+            {/* HEADER */}
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="font-semibold text-lg text-foreground">Receipt Preview</h2>
+              <Button variant="ghost" onClick={() => setPrintOpen(false)}>
+                ✕
+              </Button>
+            </div>
+
+            {/* RECEIPT CONTENT */}
+            <div id="print-area" className="font-mono text-sm">
+              <div className="flex justify-center gap-4 items-center mb-2">
+                <Image
+                  src="/splash-icon.png"
+                  alt="logo"
+                  width={30}
+                  height={30}
+                />
+                <h2 className="text-center font-bold text-lg">RAAJ FOODS</h2>
+              </div>
+
+              <p>Order Ref: {selectedOrder.id}</p>
+              <p>Type: {selectedOrder.fulfillmentType}</p>
+              <p>Date: {new Date(selectedOrder.createdAt).toLocaleString()}</p>
+
+              <div className="border-t border-dashed my-3" />
+
+              {/* ITEMS */}
+              {selectedOrder.items.map((item: any, i: number) => {
+                const customizations = item.customizations
+                  ? JSON.parse(item.customizations)
+                  : [];
+
+                return (
+                  <div key={i} className="mb-3">
+                    <p className="font-semibold">{item.name}</p>
+                    <p>
+                      {item.quantity} × ₵{item.unitPrice}
+                    </p>
+                    <p>Packaging: {item.packaging}</p>
+
+                    {customizations.length > 0 && (
+                      <p>Extras: {customizations.join(", ")}</p>
+                    )}
+                  </div>
+                );
+              })}
+
+              <div className="border-t border-dashed my-3" />
+
+              <p className="font-bold">Total: ₵{selectedOrder.total}</p>
+            </div>
+
+            {/* PRINT BUTTON */}
+            <div className="mt-6 flex items-center justify-center">
+              <Button className=" w-content bg-[#17972a80] text-gray-50" onClick={() => handlePrintNow()}>
+                Print Receipt
+                <Printer size={16} />
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <DeleteOrderDialog
         open={deleteOpen}

@@ -1,3 +1,4 @@
+// config/colors.ts
 export default {
   transparent: 'transparent',
   white: '#fff',

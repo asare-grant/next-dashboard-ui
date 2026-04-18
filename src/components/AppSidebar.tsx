@@ -109,7 +109,7 @@ const AppSidebar = () => {
   if (!user) return null; // Prevent flash
 
   return (
-    <Sidebar collapsible="icon" className="bg-[#f8f8f8]">
+    <Sidebar collapsible="icon" className="bg-background">
       {/* HEADER */}
       <SidebarHeader className="py-4">
         <SidebarMenu>
