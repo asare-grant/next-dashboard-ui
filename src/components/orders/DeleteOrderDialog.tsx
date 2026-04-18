@@ -21,7 +21,7 @@ interface Props {
 export default function DeleteOrderDialog({ open, onClose, onConfirm, orderRef }: Props) {
   return (
     <AlertDialog open={open} onOpenChange={onClose}>
-      <AlertDialogContent className="bg-[#f8f8f8]">
+      <AlertDialogContent className="bg-card text-card-foreground">
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Order?</AlertDialogTitle>
           <AlertDialogDescription>
