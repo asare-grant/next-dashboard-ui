@@ -1,28 +1,3 @@
-// import { storage, ID } from "./appwrite-client";
-
-// const BUCKET_ID = process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID!;
-
-// export async function uploadCategoryImage(file: File) {
-//   const uploaded = await storage.createFile(
-//     BUCKET_ID,
-//     ID.unique(),
-//     file
-//   );
-
-//   const previewUrl = storage.getFilePreview(
-//     BUCKET_ID,
-//     uploaded.$id,
-//     200,
-//     200
-//   );
-
-//   return {
-//     fileId: uploaded.$id,
-//     url: previewUrl,
-//   };
-// }
-
-
 import { storage } from "@/lib/appwrite-client";
 import { ID } from "appwrite";
 

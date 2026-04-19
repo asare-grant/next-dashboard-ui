@@ -39,6 +39,7 @@ import {
 } from "./ui/dropdown-menu";
 import { logout } from "@/lib/auth/logout";
 import colors from "@/config/colors";
+import { usePendingOrders } from "@/lib/hooks/usePendingOrders";
 
 /* =========================
    TYPES
@@ -92,6 +93,8 @@ const AppSidebar = () => {
   const pathname = usePathname();
   const [user, setUser] = useState<AdminUser | null>(null);
 
+  const pendingCount = usePendingOrders();
+
   /* =========================
      LOAD USER FROM STORAGE
   ========================= */
@@ -123,19 +126,23 @@ const AppSidebar = () => {
                   width={40}
                   height={40}
                 />
-                <span className="font-semibold tracking-wide text-blue-600">RAAJ FOOD</span>
+                <span className="font-semibold tracking-wide text-blue-600">
+                  RAAJ FOOD
+                </span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarSeparator className="bg-gray-300"/>
+      <SidebarSeparator className="bg-gray-300" />
 
       {/* CONTENT */}
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="mt-4 mb-2">Management</SidebarGroupLabel>
+          <SidebarGroupLabel className="mt-4 mb-2">
+            Management
+          </SidebarGroupLabel>
           <SidebarGroupAction>
             <BookOpen className="h-4 w-4 text-[#17972a80] mt-4 mb-2" />
           </SidebarGroupAction>
@@ -145,30 +152,37 @@ const AppSidebar = () => {
               {MENU_ITEMS.filter((item) => item.roles.includes(user.role)).map(
                 (item) => {
                   const Icon = item.icon;
+                  const isOrders = item.label === "Orders";
 
                   return (
                     <SidebarMenuItem key={item.label}>
                       <SidebarMenuButton asChild>
                         <Link
                           href={item.href}
-                          className={`flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-indigo-100 hover:text-[#08581480] ${
+                          className={`flex items-center justify-between rounded-md px-2 py-2 transition-colors hover:bg-indigo-100 hover:text-[#08581480] ${
                             pathname === item.href
                               ? "bg-indigo-50 text-[#08581480]"
                               : ""
                           }`}
                         >
-                          <Icon
-                            size={18}
-                            className="text-[#17972a80] shrink-0"
-                          />
-                          <span className="text-sm font-medium">
-                            {item.label}
-                          </span>
+                          <div className="flex items-center gap-3">
+                            <Icon size={18} className="text-[#17972a80] shrink-0" />
+                            <span className="text-sm font-medium">
+                              {item.label}
+                            </span>
+                          </div>
+
+                          {/* 🔴 BADGE */}
+                          {isOrders && pendingCount > 0 && (
+                            <span className="ml-2 bg-[#8e8df2] text-white text-xs px-2 py-1 rounded-full min-w-[15px] text-center">
+                              {pendingCount}
+                            </span>
+                          )}
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   );
-                }
+                },
               )}
             </SidebarMenu>
           </SidebarGroupContent>
