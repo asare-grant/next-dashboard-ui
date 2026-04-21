@@ -35,7 +35,16 @@ export const mapOrderFromBackend = (order: any): Order => {
     id: order.$id,
     customerName: order.customerName ?? "Customer",
     customerPhone: order.payerPhone ?? order.customerPhone ?? "",
-    
+
+    // items: (() => {
+    //   try {
+    //     if (Array.isArray(order.items)) return order.items;
+    //     if (typeof order.items === "string") return JSON.parse(order.items);
+    //     return [];
+    //   } catch {
+    //     return [];
+    //   }
+    // })(),
     items: Array.isArray(order.items) ? order.items : [],
     total: order.total ?? 0,
     deliveryFee: order.deliveryFee ?? 0,

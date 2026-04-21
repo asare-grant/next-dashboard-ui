@@ -342,3 +342,134 @@ export default function StaffPage() {
     </div>
   );
 }
+
+
+// {printOpen && selectedOrder && (
+//         <div className="fixed inset-0 z-50 flex justify-end">
+//           {/* BACKDROP */}
+//           <div
+//             className="absolute inset-0 bg-black/40"
+//             onClick={() => setPrintOpen(false)}
+//           />
+
+//           {/* PANEL */}
+//           <div className="relative w-[350px] h-full bg-card text-card-foreground shadow-xl p-4 overflow-y-auto">
+//             {/* HEADER */}
+//             <div className="flex justify-between items-center mb-4">
+//               <h2 className="font-semibold text-lg text-foreground">
+//                 Receipt Preview
+//               </h2>
+//               <Button variant="ghost" onClick={() => setPrintOpen(false)}>
+//                 ✕
+//               </Button>
+//             </div>
+
+//             {/* RECEIPT CONTENT */}
+//             <div id="print-area" className="font-mono text-sm">
+//               <div className="flex justify-center gap-4 items-center mb-2">
+//                 <Image
+//                   src="/splash-icon.png"
+//                   alt="logo"
+//                   width={30}
+//                   height={30}
+//                 />
+//                 <h2 className="text-center font-bold text-lg">RAAJ FOODS</h2>
+//               </div>
+
+//               <p>Order Ref: {selectedOrder.id}</p>
+//               <p>Date: {new Date(selectedOrder.createdAt).toLocaleString()}</p>
+//               <p>Type: {selectedOrder.fulfillmentType}</p>
+//               <p>
+//                 <strong>Phone:</strong> +{selectedOrder.customerPhone || "—"}
+//               </p>
+//               {/* {selectedOrder.address && (
+//                 <p className="mt-1">
+//                   <strong>Address:</strong> {selectedOrder.address.fullAddress}
+//                 </p>
+//               )} */}
+
+//               <div className="border-t border-dashed my-3" />
+
+//               {/* ITEMS */}
+//               {selectedOrder.items.map((item: any, i: number) => {
+//                 const qty = item.quantity || 1;
+//                 const total = qty * item.unitPrice;
+
+//                 const customizations = item.customizations
+//                   ? JSON.parse(item.customizations)
+//                   : [];
+
+//                 const drinks = item.drinks ? JSON.parse(item.drinks) : [];
+
+//                 return (
+//                   <div key={i} className="mb-2">
+//                     <div className="flex justify-between">
+//                       <span>
+//                         {qty} x {item.name}
+//                       </span>
+//                       <span>₵{total.toFixed(2)}</span>
+//                     </div>
+
+//                     <p className="text-xs">
+//                       ₵{item.unitPrice} each | {item.packaging}
+//                     </p>
+
+//                     {drinks.length > 0 && (
+//                       <p className="text-xs">Drinks: {drinks.join(", ")}</p>
+//                     )}
+
+//                     {customizations.length > 0 && (
+//                       <p className="text-xs">
+//                         Extras: {customizations.join(", ")}
+//                       </p>
+//                     )}
+//                   </div>
+//                 );
+//               })}
+
+//               <div className="border-t border-dashed my-3" />
+
+//               {/* SUMMARY */}
+//               <div className="flex justify-between">
+//                 <span>Items Total</span>
+//                 <span>₵{selectedOrder.total.toFixed(2)}</span>
+//               </div>
+
+//               <div className="flex justify-between">
+//                 <span>Delivery Fee</span>
+//                 <span>₵{(selectedOrder.deliveryFee || 0).toFixed(2)}</span>
+//               </div>
+
+//               <div className="flex justify-between font-bold text-base mt-1">
+//                 <span>Grand Total</span>
+//                 <span>
+//                   ₵
+//                   {(
+//                     selectedOrder.total + (selectedOrder.deliveryFee || 0)
+//                   ).toFixed(2)}
+//                 </span>
+//               </div>
+
+//               <div className="border-t border-dashed my-3" />
+
+//               <p>Payment: {selectedOrder.paymentStatus?.toUpperCase()}</p>
+//               <p>Status: {selectedOrder.orderStatus?.toUpperCase()}</p>
+
+//               <p className="text-center mt-3 text-xs">
+//                 Thank you for your order ❤️
+//               </p>
+//             </div>
+
+//             {/* PRINT BUTTON */}
+//             <div className="mt-6 flex items-center justify-center">
+//               <Button
+//                 className=" w-content bg-[#17972a80] text-gray-50"
+//                 onClick={() => handlePrintNow()}
+//               >
+//                 Print Receipt
+//                 <Printer size={16} />
+//               </Button>
+//             </div>
+//           </div>
+//         </div>
+//       )}

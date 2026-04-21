@@ -21,7 +21,6 @@ import { OrderFormValues } from "@/components/orders/OrderForm";
 import DeleteOrderDialog from "@/components/orders/DeleteOrderDialog";
 import { ORDER_STATUSES, PAYMENT_STATUSES } from "@/constants/order-status";
 
-
 import client from "@/lib/appwrite-client";
 import { account } from "@/lib/appwrite-client";
 import Image from "next/image";
@@ -191,20 +190,24 @@ export default function OrdersPage() {
   };
 
   //   Kitchen print receipt function
+  // const handlePrintNow = () => {
+  //   const printContents = document.getElementById("print-area")?.innerHTML;
+
+  //   const originalContents = document.body.innerHTML;
+
+  //   if (!printContents) return;
+
+  //   document.body.innerHTML = printContents;
+
+  //   window.print();
+
+  //   document.body.innerHTML = originalContents;
+
+  //   window.location.reload(); // ensures React restores properly
+  // };
+
   const handlePrintNow = () => {
-    const printContents = document.getElementById("print-area")?.innerHTML;
-
-    const originalContents = document.body.innerHTML;
-
-    if (!printContents) return;
-
-    document.body.innerHTML = printContents;
-
     window.print();
-
-    document.body.innerHTML = originalContents;
-
-    window.location.reload(); // ensures React restores properly
   };
 
   /* ---------------- COLUMN DEFINITIONS ---------------- */
@@ -637,19 +640,19 @@ export default function OrdersPage() {
   //   borderWidth: 2,
   // });
   const gridTheme = useMemo(() => {
-  const isDark = theme === "dark";
+    const isDark = theme === "dark";
 
-  return themeQuartz.withParams({
-    spacing: 6,
-    rowBorder: true,
-    foregroundColor: isDark ? "#e5e7eb" : "#1f2937",
-    backgroundColor: isDark ? "#020617" : "#ffffff",
-    headerBackgroundColor: isDark ? "#020617" : "#f1f5f9",
-    rowHoverColor: isDark ? "#1e293b" : "#e0e7ff",
-    borderRadius: 12,
-    borderWidth: 2,
-  });
-}, [theme]);
+    return themeQuartz.withParams({
+      spacing: 6,
+      rowBorder: true,
+      foregroundColor: isDark ? "#e5e7eb" : "#1f2937",
+      backgroundColor: isDark ? "#020617" : "#ffffff",
+      headerBackgroundColor: isDark ? "#020617" : "#f1f5f9",
+      rowHoverColor: isDark ? "#1e293b" : "#e0e7ff",
+      borderRadius: 12,
+      borderWidth: 2,
+    });
+  }, [theme]);
 
   /* ---------------- LOADING & EMPTY STATES ---------------- */
   const LoadingState = () => (
@@ -728,6 +731,17 @@ export default function OrdersPage() {
                 ? JSON.parse(item.customizations)
                 : [];
 
+              const drinks = (() => {
+                try {
+                  if (Array.isArray(item.drinks)) return item.drinks;
+                  if (typeof item.drinks === "string")
+                    return JSON.parse(item.drinks);
+                  return [];
+                } catch {
+                  return [];
+                }
+              })();
+
               return (
                 <div
                   key={index}
@@ -757,6 +771,11 @@ export default function OrdersPage() {
                       </ul>
                     </div>
                   )}
+
+                  {/* DRINKS */}
+                  {drinks.length > 0 && (
+                      <p className="text-xs">Drinks: {drinks.join(", ")}</p>
+                    )}
                 </div>
               );
             })}
@@ -766,9 +785,8 @@ export default function OrdersPage() {
             </div>
           </div>
         </div>
-      )};
-
-
+      )}
+      ;
       {printOpen && selectedOrder && (
         <div className="fixed inset-0 z-50 flex justify-end">
           {/* BACKDROP */}
@@ -781,7 +799,9 @@ export default function OrdersPage() {
           <div className="relative w-[350px] h-full bg-card text-card-foreground shadow-xl p-4 overflow-y-auto">
             {/* HEADER */}
             <div className="flex justify-between items-center mb-4">
-              <h2 className="font-semibold text-lg text-foreground">Receipt Preview</h2>
+              <h2 className="font-semibold text-lg text-foreground">
+                Receipt Preview
+              </h2>
               <Button variant="ghost" onClick={() => setPrintOpen(false)}>
                 ✕
               </Button>
@@ -800,27 +820,60 @@ export default function OrdersPage() {
               </div>
 
               <p>Order Ref: {selectedOrder.id}</p>
-              <p>Type: {selectedOrder.fulfillmentType}</p>
               <p>Date: {new Date(selectedOrder.createdAt).toLocaleString()}</p>
+              <p>Type: {selectedOrder.fulfillmentType}</p>
+              <p>
+                <strong>Phone:</strong> {selectedOrder.customerPhone || "—"}
+              </p>
+              {/* {selectedOrder.address && (
+                <p className="mt-1">
+                  <strong>Address:</strong> {selectedOrder.address.fullAddress}
+                </p>
+              )} */}
 
               <div className="border-t border-dashed my-3" />
 
               {/* ITEMS */}
               {selectedOrder.items.map((item: any, i: number) => {
+                const qty = item.quantity || 1;
+                const total = qty * item.unitPrice;
+
                 const customizations = item.customizations
                   ? JSON.parse(item.customizations)
                   : [];
 
+                const drinks = (() => {
+                  try {
+                    if (Array.isArray(item.drinks)) return item.drinks;
+                    if (typeof item.drinks === "string")
+                      return JSON.parse(item.drinks);
+                    return [];
+                  } catch {
+                    return [];
+                  }
+                })();
+
                 return (
-                  <div key={i} className="mb-3">
-                    <p className="font-semibold">{item.name}</p>
-                    <p>
-                      {item.quantity} × ₵{item.unitPrice}
+                  <div key={i} className="mb-2">
+                    <div className="flex justify-between">
+                      <span>
+                        {qty} x {item.name}
+                      </span>
+                      <span>₵{total.toFixed(2)}</span>
+                    </div>
+
+                    <p className="text-xs">
+                      ₵{item.unitPrice} each | {item.packaging}
                     </p>
-                    <p>Packaging: {item.packaging}</p>
+
+                    {drinks.length > 0 && (
+                      <p className="text-xs">Drinks: {drinks.join(", ")}</p>
+                    )}
 
                     {customizations.length > 0 && (
-                      <p>Extras: {customizations.join(", ")}</p>
+                      <p className="text-xs">
+                        Extras: {customizations.join(", ")}
+                      </p>
                     )}
                   </div>
                 );
@@ -828,12 +881,43 @@ export default function OrdersPage() {
 
               <div className="border-t border-dashed my-3" />
 
-              <p className="font-bold">Total: ₵{selectedOrder.total}</p>
+              {/* SUMMARY */}
+              <div className="flex justify-between">
+                <span>Items Total</span>
+                <span>₵{selectedOrder.total.toFixed(2)}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span>Delivery Fee</span>
+                <span>₵{(selectedOrder.deliveryFee || 0).toFixed(2)}</span>
+              </div>
+
+              <div className="flex justify-between font-bold text-base mt-1">
+                <span>Grand Total</span>
+                <span>
+                  ₵
+                  {(
+                    selectedOrder.total + (selectedOrder.deliveryFee || 0)
+                  ).toFixed(2)}
+                </span>
+              </div>
+
+              <div className="border-t border-dashed my-3" />
+
+              <p>Payment: {selectedOrder.paymentStatus?.toUpperCase()}</p>
+              {/* <p>Status: {selectedOrder.orderStatus?.toUpperCase()}</p> */}
+
+              <p className="text-center mt-3 text-xs">
+                Thank you for your order ❤️
+              </p>
             </div>
 
             {/* PRINT BUTTON */}
             <div className="mt-6 flex items-center justify-center">
-              <Button className=" w-content bg-[#17972a80] text-gray-50" onClick={() => handlePrintNow()}>
+              <Button
+                className=" w-content bg-[#17972a80] text-gray-50"
+                onClick={() => handlePrintNow()}
+              >
                 Print Receipt
                 <Printer size={16} />
               </Button>
@@ -841,7 +925,6 @@ export default function OrdersPage() {
           </div>
         </div>
       )}
-
       <DeleteOrderDialog
         open={deleteOpen}
         onClose={() => setDeleteOpen(false)}

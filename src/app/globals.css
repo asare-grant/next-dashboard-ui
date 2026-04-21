@@ -153,3 +153,25 @@
 .ag-row-hover-actions:hover select {
   border-color: #6366f1;
 }
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #print-area, #print-area * {
+    visibility: visible;
+  }
+
+  #print-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  @page {
+    size: auto;
+    margin: 10mm;
+  }
+}
