@@ -828,6 +828,7 @@ export default function OrdersPage() {
 
             {/* RECEIPT CONTENT */}
             <div id="print-area" className="font-mono text-sm">
+              {/* HEADER */}
               <div className="text-center mb-2">
                 <div className="flex justify-center gap-4 items-center ">
                   <Image
@@ -841,14 +842,24 @@ export default function OrdersPage() {
                 <p className="text-xs">Fast Food • Delivery • Pickup</p>
               </div>
 
-              <div className="border-t border-dashed my-3" />
+              <div className="divider" />
 
-              <p>Order Ref: {selectedOrder.id}</p>
-              <p>
-                Order Date: {new Date(selectedOrder.createdAt).toLocaleString()}
-              </p>
-              <p>Type: {selectedOrder.fulfillmentType}</p>
-              <p>Phone: {selectedOrder.customerPhone || "—"}</p>
+              <h3 className="text-center font-bold tracking-widest">
+                SALES RECEIPT
+              </h3>
+
+              <div className="divider" />
+
+              {/* ORDER META */}
+              <div className="text-xs space-y-1">
+                <p>Order Ref: {selectedOrder.id}</p>
+                <p>
+                  Order Date:{" "}
+                  {new Date(selectedOrder.createdAt).toLocaleString("en-GB")}
+                </p>
+                <p>Type: {selectedOrder.fulfillmentType?.toUpperCase()}</p>
+                <p>Phone: {selectedOrder.customerPhone || "—"}</p>
+              </div>
 
               {/* {selectedOrder.address && (
                 <p className="mt-1">
@@ -856,7 +867,15 @@ export default function OrdersPage() {
                 </p>
               )} */}
 
-              <div className="border-t border-dashed my-3" />
+              <div className="divider" />
+
+              {/* ITEMS HEADER */}
+              <div className="flex justify-between text-xs font-bold">
+                <span>Qty Item</span>
+                <span>Price</span>
+              </div>
+
+              <div className="divider-dots" />
 
               {/* ITEMS */}
               {selectedOrder.items.map((item: any, i: number) => {
@@ -879,7 +898,7 @@ export default function OrdersPage() {
                 })();
 
                 return (
-                  <div key={i} className="mb-2">
+                  <div key={i} className="mb-2 text-xs">
                     <div className="flex justify-between">
                       <span>
                         {qty} x {item.name}
@@ -904,21 +923,26 @@ export default function OrdersPage() {
                 );
               })}
 
-              <div className="border-t border-dashed my-3" />
+              <div className="divider" />
 
               {/* SUMMARY */}
-              <div className="flex justify-between">
-                <span>Items Total</span>
-                <span>₵{selectedOrder.total.toFixed(2)}</span>
+              <div className="text-xs space-y-1">
+                <div className="flex justify-between">
+                  <span>Sub Total:</span>
+                  <span>₵{selectedOrder.total.toFixed(2)}</span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span>Delivery Fee:</span>
+                  <span>₵{(selectedOrder.deliveryFee || 0).toFixed(2)}</span>
+                </div>
               </div>
 
-              <div className="flex justify-between">
-                <span>Delivery Fee</span>
-                <span>₵{(selectedOrder.deliveryFee || 0).toFixed(2)}</span>
-              </div>
+              <div className="divider-dots" />
 
-              <div className="flex justify-between font-bold text-base mt-1">
-                <span>Grand Total</span>
+              {/* GRAND TOTAL */}
+              <div className="flex justify-between font-bold text-base">
+                <span>Total:</span>
                 <span>
                   ₵
                   {(
@@ -927,40 +951,50 @@ export default function OrdersPage() {
                 </span>
               </div>
 
-              <div className="border-t border-dashed my-3" />
+              <div className="divider" />
 
-              <p>Payment: {selectedOrder.paymentStatus?.toUpperCase()}</p>
-              {/* <p>Status: {selectedOrder.orderStatus?.toUpperCase()}</p> */}
+              {/* PAYMENT */}
+              <div className="text-xs space-y-1">
+                <div className="flex justify-between">
+                  <span>Payment:</span>
+                  <span>{selectedOrder.paymentMethod?.toUpperCase()}</span>
+                </div>
 
-              <p className="text-center mt-3 text-xs">
-                Thank you for your order ❤️
-              </p>
+                <div className="flex justify-between">
+                  <span>Status:</span>
+                  <span>{selectedOrder.paymentStatus?.toUpperCase()}</span>
+                </div>
+              </div>
 
-              <div className="border-t border-dashed my-3" />
+              <div className="divider" />
+
+              {/* THANK YOU */}
+              <p className="text-center text-xs mt-2">THANK YOU</p>
+
+              <div className="divider" />
 
               {/* BARCODE */}
               <div className="flex flex-col w-full items-center mt-3">
                 <Barcode
-                  value={selectedOrder.id} // you can also use serial
+                  value={selectedOrder.paymentReference || selectedOrder.id}
                   height={50}
                   width={1.5}
                   displayValue={false}
                 />
               </div>
 
-              <div className="border-t border-dashed my-3" />
-
               {/* SERIAL + DATE */}
               <div className="flex items-center justify-between text-xs mx-4">
                 <p>{printMeta.serial}</p>
                 <p>{printMeta.printedAt}</p>
+                <p>Admin</p>
               </div>
             </div>
 
             {/* PRINT BUTTON */}
             <div className="mt-6 flex items-center justify-center">
               <Button
-                className=" w-content bg-[#17972a80] text-gray-50"
+                className=" w-content bg-[#17972a80]"
                 onClick={() => handlePrintNow()}
               >
                 Print Receipt

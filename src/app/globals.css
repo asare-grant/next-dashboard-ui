@@ -179,3 +179,24 @@
     max-width: 100%;
   }
 }
+
+
+/* ===== RECEIPT STYLE ===== */
+.receipt {
+  width: 280px;
+  margin: 0 auto;
+  font-family: "Courier New", monospace;
+  color: #000;
+}
+
+/* SOLID DIVIDER */
+.divider {
+  border-top: 1px dashed #000;
+  margin: 8px 0;
+}
+
+/* DOTTED DIVIDER */
+.divider-dots {
+  border-top: 1px dotted #000;
+  margin: 6px 0;
+}
