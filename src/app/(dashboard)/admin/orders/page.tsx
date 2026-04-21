@@ -935,26 +935,26 @@ export default function OrdersPage() {
               <p className="text-center mt-3 text-xs">
                 Thank you for your order ❤️
               </p>
-            </div>
 
-            <div className="border-t border-dashed my-3" />
+              <div className="border-t border-dashed my-3" />
 
-            {/* BARCODE */}
-            <div className="flex flex-col w-full items-center mt-3">
-              <Barcode
-                value={selectedOrder.id} // you can also use serial
-                height={50}
-                width={1.5}
-                displayValue={false}
-              />
-            </div>
+              {/* BARCODE */}
+              <div className="flex flex-col w-full items-center mt-3">
+                <Barcode
+                  value={selectedOrder.id} // you can also use serial
+                  height={50}
+                  width={1.5}
+                  displayValue={false}
+                />
+              </div>
 
-            <div className="border-t border-dashed my-3" />
+              <div className="border-t border-dashed my-3" />
 
-            {/* SERIAL + DATE */}
-            <div className="flex items-center justify-between text-xs mx-4">
-              <p>{printMeta.serial}</p>
-              <p>{printMeta.printedAt}</p>
+              {/* SERIAL + DATE */}
+              <div className="flex items-center justify-between text-xs mx-4">
+                <p>{printMeta.serial}</p>
+                <p>{printMeta.printedAt}</p>
+              </div>
             </div>
 
             {/* PRINT BUTTON */}
