@@ -828,21 +828,28 @@ export default function OrdersPage() {
 
             {/* RECEIPT CONTENT */}
             <div id="print-area" className="font-mono text-sm">
-              <div className="flex justify-center gap-4 items-center mb-2">
-                <Image
-                  src="/splash-icon.png"
-                  alt="logo"
-                  width={30}
-                  height={30}
-                />
-                <h2 className="text-center font-bold text-lg">RAAJ FOODS</h2>
+              <div className="text-center mb-2">
+                <div className="flex justify-center gap-4 items-center ">
+                  <Image
+                    src="/splash-icon.png"
+                    alt="logo"
+                    width={30}
+                    height={30}
+                  />
+                  <h2 className="text-center font-bold text-lg">RAAJ FOODS</h2>
+                </div>
+                <p className="text-xs">Fast Food • Delivery • Pickup</p>
               </div>
 
+              <div className="border-t border-dashed my-3" />
+
               <p>Order Ref: {selectedOrder.id}</p>
-              <p>Order Date: {new Date(selectedOrder.createdAt).toLocaleString()}</p>
+              <p>
+                Order Date: {new Date(selectedOrder.createdAt).toLocaleString()}
+              </p>
               <p>Type: {selectedOrder.fulfillmentType}</p>
               <p>Phone: {selectedOrder.customerPhone || "—"}</p>
-              
+
               {/* {selectedOrder.address && (
                 <p className="mt-1">
                   <strong>Address:</strong> {selectedOrder.address.fullAddress}

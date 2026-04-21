@@ -174,4 +174,8 @@
     size: auto;
     margin: 10mm;
   }
+
+  svg {
+    max-width: 100%;
+  }
 }
