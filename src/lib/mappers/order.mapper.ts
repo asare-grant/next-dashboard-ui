@@ -31,21 +31,34 @@ export const mapOrderFromBackend = (order: any): Order => {
     throw new Error("Invalid order payload from backend");
   }
 
+  // ✅ Parse address safely
+  let parsedAddress = null;
+  try {
+    if (typeof order.address === "string") {
+      parsedAddress = JSON.parse(order.address);
+    } else {
+      parsedAddress = order.address;
+    }
+  } catch {
+    parsedAddress = null;
+  }
+
   return {
     id: order.$id,
     customerName: order.customerName ?? "Customer",
     customerPhone: order.payerPhone ?? order.customerPhone ?? "",
 
-    // items: (() => {
-    //   try {
-    //     if (Array.isArray(order.items)) return order.items;
-    //     if (typeof order.items === "string") return JSON.parse(order.items);
-    //     return [];
-    //   } catch {
-    //     return [];
-    //   }
-    // })(),
-    items: Array.isArray(order.items) ? order.items : [],
+    items: (() => {
+      try {
+        if (Array.isArray(order.items)) return order.items;
+        if (typeof order.items === "string") return JSON.parse(order.items);
+        return [];
+      } catch {
+        return [];
+      }
+    })(),
+    
+    // items: Array.isArray(order.items) ? order.items : [],
     total: order.total ?? 0,
     deliveryFee: order.deliveryFee ?? 0,
     fulfillmentType: order.fulfillmentType ?? "delivery",
@@ -64,5 +77,7 @@ export const mapOrderFromBackend = (order: any): Order => {
 
     orderStatus: order.orderStatus ?? "pending",
     createdAt: order.$createdAt,
+
+    address: parsedAddress, // ✅ THIS IS THE KEY FIX
   };
 };

@@ -215,6 +215,7 @@ export default function CategoriesPage() {
     return themeQuartz.withParams({
       spacing: 6,
       rowBorder: true,
+      columnBorder: true, // 👈 ADD THIS
       foregroundColor: isDark ? "#e5e7eb" : "#1f2937",
       backgroundColor: isDark ? "#020617" : "#ffffff",
       headerBackgroundColor: isDark ? "#020617" : "#f1f5f9",

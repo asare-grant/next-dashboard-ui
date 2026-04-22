@@ -99,4 +99,6 @@ export interface Order {
 
   orderStatus: OrderStatus;
   createdAt: string;
+
+  address: any;
 }

@@ -646,12 +646,17 @@ export default function OrdersPage() {
     return themeQuartz.withParams({
       spacing: 6,
       rowBorder: true,
+      columnBorder: true, // 👈 ADD THIS
       foregroundColor: isDark ? "#e5e7eb" : "#1f2937",
       backgroundColor: isDark ? "#020617" : "#ffffff",
       headerBackgroundColor: isDark ? "#020617" : "#f1f5f9",
       rowHoverColor: isDark ? "#1e293b" : "#e0e7ff",
       borderRadius: 12,
-      borderWidth: 2,
+      borderWidth: 1,
+
+      /* ================= FONTS ================= */
+      fontSize: 13,
+      fontFamily: "Inter, system-ui, sans-serif",
     });
   }, [theme]);
 
@@ -713,7 +718,7 @@ export default function OrdersPage() {
             columnDefs={columnDefs}
             pagination
             paginationPageSize={10}
-            paginationPageSizeSelector={[10, 20, 50]}
+            paginationPageSizeSelector={[10, 25, 50, 100]}
             suppressCellFocus
             animateRows
             rowSelection={{
@@ -857,7 +862,7 @@ export default function OrdersPage() {
                   Order Date:{" "}
                   {new Date(selectedOrder.createdAt).toLocaleString("en-GB")}
                 </p>
-                <p>Type: {selectedOrder.fulfillmentType?.toUpperCase()}</p>
+                <p>Type: {selectedOrder.fulfillmentType?.toUpperCase()} - {selectedOrder.address?.placeName || selectedOrder.address?.fullAddress || "No address"}</p>
                 <p>Phone: {selectedOrder.customerPhone || "—"}</p>
               </div>
 
